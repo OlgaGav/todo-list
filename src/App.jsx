@@ -9,9 +9,8 @@ const todos = [
   { id: 3, title: "Code out app" },
 ];
 
-const [todoList, setTodoList] = useState(todos);
-
 function App() {
+  const [todoList, setTodoList] = useState(todos);
   return (
     <div>
       <h1>Todo List</h1>
