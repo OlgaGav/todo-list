@@ -6,12 +6,12 @@ import TodoForm from "./TodoForm.jsx";
 function App() {
   const [todoList, setTodoList] = useState([]);
 
-  function addTodo({todoTitle }) {
+  function addTodo(todoTitle) {
     const newTodo = {
       id: Date.now(),
       title: todoTitle
     }
-    setTodoList((previous) => [newTodo, ...previous]);
+    setTodoList(previous => [newTodo, ...previous]);
   }
 
   return (
