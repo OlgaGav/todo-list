@@ -6,14 +6,11 @@ function TodoForm({ onAddTodo }) {
     event.preventDefault();
     // .trim to prevents whitespace only todos
     const todoTitle = event.target.todoTitle.value.trim();
-    if (todoTitle && todoTitle !== "") {
+    if (todoTitle) {
       onAddTodo(todoTitle);
       event.target.reset();
+      inputRef.current.focus();
     }
-    if(todoTitle === "") {
-      event.target.reset();
-    }
-    inputRef.current.focus();
   };
 
   return (
