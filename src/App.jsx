@@ -10,8 +10,16 @@ function App() {
     const newTodo = {
       id: Date.now(),
       title: todoTitle,
+      isCompleted: false,
     };
     setTodoList((previous) => [newTodo, ...previous]);
+  }
+
+  function completeTodo(id) {
+    const updatedTodoList = todoList.map((todo) =>
+      todo.id === id ? { ...todo, isCompleted: true } : todo,
+    );
+    setTodoList(updatedTodoList);
   }
 
   return (
@@ -21,7 +29,7 @@ function App() {
       {todoList.length === 0 ? (
         "Add todo above to get started"
       ) : (
-        <TodoList todoList={todoList} />
+        <TodoList todoList={todoList} onCompleteTodo={completeTodo} />
       )}
     </div>
   );
