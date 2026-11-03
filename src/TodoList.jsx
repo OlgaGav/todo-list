@@ -5,19 +5,17 @@ function TodoList({ todoList, onCompleteTodo }) {
     (todo) => todo.isCompleted === false,
   );
 
-  return (
+  return filteredTodoList.length === 0 ? (
+    <p>Add todo above to get started</p>
+  ) : (
     <ul>
-      {filteredTodoList.length === 0 ? (
-        <div> "Add todo above to get started"; </div>
-      ) : (
-        filteredTodoList.map((todo) => (
-          <TodoListItem
-            key={todo.id}
-            todo={todo}
-            onCompleteTodo={onCompleteTodo}
-          />
-        ))
-      )}
+      {filteredTodoList.map((todo) => (
+        <TodoListItem
+          key={todo.id}
+          todo={todo}
+          onCompleteTodo={onCompleteTodo}
+        />
+      ))}
     </ul>
   );
 }
