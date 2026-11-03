@@ -4,6 +4,10 @@ function TodoList({todoList, onCompleteTodo}) {
 
   const filteredTodoList = todoList.filter(todo => todo.isCompleted === false) 
 
+  if (filteredTodoList.length === 0) {
+    return "Add todo above to get started";
+  }
+
   return (
       <ul>
         {filteredTodoList.map((todo) => (

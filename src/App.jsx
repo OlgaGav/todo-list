@@ -26,11 +26,7 @@ function App() {
     <div>
       <h1>Todo List</h1>
       <TodoForm onAddTodo={addTodo} />
-      {todoList.length === 0 ? (
-        "Add todo above to get started"
-      ) : (
         <TodoList todoList={todoList} onCompleteTodo={completeTodo} />
-      )}
     </div>
   );
 }
