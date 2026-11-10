@@ -1,5 +1,6 @@
 import TextInputWithLabel from "./../../shared/TextInputWithLabel";
 import { useEditableTitle } from "./../../hooks/useEditableTitle";
+import {isValidTodoTitle} from './../../utils/todoValidation'
 
 function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   const {
@@ -31,7 +32,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
             <button type="button" onClick={cancelEdit}>
               Cancel
             </button>
-            <button type="button" onClick={handleUpdate}>
+            <button type="button" onClick={handleUpdate} disabled={!isValidTodoTitle(workingTitle)}>
               Update
             </button>
           </>
