@@ -26,6 +26,7 @@ function TodosPage({ token }) {
         setTodoList(data.tasks);
       } catch (error) {
         console.log(error.message);
+        setError(error.message);
       } finally {
         setIsTodoListLoading(false);
       }
@@ -35,14 +36,6 @@ function TodosPage({ token }) {
     }
   }, [token]);
 
-  // function addTodo(todoTitle) {
-  //   const newTodo = {
-  //     id: Date.now(),
-  //     title: todoTitle,
-  //     isCompleted: false,
-  //   };
-  //   setTodoList((previous) => [newTodo, ...previous]);
-  // }
   async function addTodo(title) {
     const newTodo = { id: Date.now(), title, isCompleted: false };
     setTodoList((previous) => [newTodo, ...previous]);
@@ -67,13 +60,6 @@ function TodosPage({ token }) {
       setError(error.message);
     }
   }
-
-  // function updateTodo(editedTodo) {
-  //   const updatedTodos = todoList.map((todo) =>
-  //     todo.id === editedTodo.id ? { ...editedTodo } : todo,
-  //   );
-  //   setTodoList(updatedTodos);
-  // }
 
   async function updateTodo(editedTodo) {
     const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
@@ -102,13 +88,6 @@ function TodosPage({ token }) {
       setError(error.message);
     }
   }
-
-  // function completeTodo(id) {
-  //   const updatedTodoList = todoList.map((todo) =>
-  //     todo.id === id ? { ...todo, isCompleted: true } : todo,
-  //   );
-  //   setTodoList(updatedTodoList);
-  // }
 
   async function completeTodo(id) {
     const originalTodo = todoList.find((todo) => todo.id === id);
