@@ -1,4 +1,4 @@
-import TodoListItem from "../../features/TodoList/TodoListItem.jsx";
+import TodoListItem from "./TodoListItem";
 
 function TodoList({ todoList, onCompleteTodo, onUpdateTodo }) {
   const filteredTodoList = todoList.filter(

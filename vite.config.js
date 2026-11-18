@@ -1,10 +1,39 @@
-import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react';
+import { fileURLToPath, URL } from 'node:url';
+import { defineConfig, loadEnv } from 'vite';
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 5001
-  }
-})
+export default ({ mode }) => {
+  const env = loadEnv(mode, '.', '');
+  return defineConfig({
+    plugins: [react()],
+    resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+    server: {
+      port: 3001,
+      proxy: {
+        '/api': {
+          target: env.VITE_TARGET,
+          secure: false,
+          changeOrigin: true,
+          configure: (proxy) => {
+            proxy.on('proxyRes', (proxyRes) => {
+              const cookies = proxyRes.headers['set-cookie'];
+              if (cookies) {
+                proxyRes.headers['set-cookie'] = cookies.map((cookie) =>
+                  cookie
+                    .replace(/; *Secure/gi, '')
+                    .replace(/; *SameSite=None/gi, '')
+                    .replace(/; *Domain=[^;]+/gi, '')
+                );
+              }
+            });
+          },
+        },
+      },
+    },
+  });
+};
