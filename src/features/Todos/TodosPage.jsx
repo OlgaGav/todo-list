@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import TodoList from "./TodoList/TodoList.jsx";
 import TodoForm from "./TodoForm.jsx";
+import { isValidTodoTitle } from "@/utils/todoValidation";
 
 function TodosPage({ token }) {
   const [todoList, setTodoList] = useState([]);
-  const [error, setError] = useState();
+  const [error, setError] = useState("");
   const [isTodoListLoading, setIsTodoListLoading] = useState(false);
 
   useEffect(() => {
@@ -25,7 +26,6 @@ function TodosPage({ token }) {
         const data = await response.json();
         setTodoList(data.tasks);
       } catch (error) {
-        console.log(error.message);
         setError(error.message);
       } finally {
         setIsTodoListLoading(false);
@@ -37,6 +37,7 @@ function TodosPage({ token }) {
   }, [token]);
 
   async function addTodo(title) {
+    if (!isValidTodoTitle(title)) return;
     const newTodo = { id: Date.now(), title, isCompleted: false };
     setTodoList((previous) => [newTodo, ...previous]);
     try {

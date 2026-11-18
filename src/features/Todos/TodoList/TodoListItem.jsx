@@ -1,6 +1,6 @@
 import TextInputWithLabel from "@/shared/TextInputWithLabel";
 import { useEditableTitle } from "@/hooks/useEditableTitle";
-import {isValidTodoTitle} from '@/utils/todoValidation'
+import { isValidTodoTitle } from "@/utils/todoValidation";
 
 function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   const {
@@ -15,6 +15,7 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
   function handleUpdate(event) {
     if (!isEditing) return;
     event.preventDefault();
+    if (!isValidTodoTitle(workingTitle)) return;
     const finalTitle = finishEdit();
     onUpdateTodo({ ...todo, title: finalTitle });
   }
@@ -28,11 +29,20 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
       <form onSubmit={handleUpdate}>
         {isEditing ? (
           <>
-            <TextInputWithLabel value={workingTitle} onChange={handleEdit} />
+            <TextInputWithLabel
+              elementId={`editTitle${todo.id}`}
+              labelText="Edit todo"
+              value={workingTitle}
+              onChange={handleEdit}
+            />
             <button type="button" onClick={cancelEdit}>
               Cancel
             </button>
-            <button type="button" onClick={handleUpdate} disabled={!isValidTodoTitle(workingTitle)}>
+            <button
+              type="button"
+              onClick={handleUpdate}
+              disabled={!isValidTodoTitle(workingTitle)}
+            >
               Update
             </button>
           </>
@@ -40,13 +50,27 @@ function TodoListItem({ todo, onCompleteTodo, onUpdateTodo }) {
           <>
             <label>
               <input
+                elementId={todo.id}
+                labelText="todo"
                 type="checkbox"
                 id={`checkbox${todo.id}`}
                 checked={todo.isCompleted}
                 onChange={() => onCompleteTodo(todo.id)}
               />
             </label>
-            <span onClick={startEditing}>{todo.title}</span>
+            <span
+              role="button"
+              tabIndex={0}
+              onClick={startEditing}
+              onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  startEditing();
+                }
+              }}
+            >
+              {todo.title}
+            </span>
           </>
         )}
       </form>

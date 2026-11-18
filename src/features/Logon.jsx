@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function Logon({ onSetEmail, onSetToken}) {
+function Logon({ onSetEmail, onSetToken }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
@@ -9,6 +9,7 @@ function Logon({ onSetEmail, onSetToken}) {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setIsLoggingOn(true);
+    setAuthError("");
     try {
       const response = await fetch("/api/users/logon", {
         method: "POST",
@@ -21,7 +22,9 @@ function Logon({ onSetEmail, onSetToken}) {
         onSetEmail(data.email);
         onSetToken(data.csrfToken);
       } else {
-        setAuthError(`Authentication failed: ${data?.message}`);
+        setAuthError(
+          `Authentication failed: ${data?.message ?? "unknown error"}`,
+        );
       }
     } catch (error) {
       setAuthError(`Error: ${error.name} | ${error.message}`);
@@ -33,15 +36,16 @@ function Logon({ onSetEmail, onSetToken}) {
   return (
     <div>
       <h1>Login Page</h1>
-      <form onSubmit={handleSubmit} className='login-form'>
-        <label htmlFor='email'>email</label>
+      {authError && <p className="error-message">{authError}</p>}
+      <form onSubmit={handleSubmit} className="login-form">
+        <label htmlFor="email">email</label>
         <input
           id="email"
           value={email}
           required
           onChange={(event) => setEmail(event.target.value)}
         ></input>
-        <label htmlFor='password'>password</label>
+        <label htmlFor="password">password</label>
         <input
           id="password"
           value={password}
@@ -49,7 +53,9 @@ function Logon({ onSetEmail, onSetToken}) {
           required
           onChange={(event) => setPassword(event.target.value)}
         ></input>
-        <button disabled={isLoggingOn}>{isLoggingOn?"Logging in...":"Log On"}</button>
+        <button disabled={isLoggingOn}>
+          {isLoggingOn ? "Logging in..." : "Log On"}
+        </button>
       </form>
     </div>
   );
