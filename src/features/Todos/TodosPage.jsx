@@ -136,14 +136,22 @@ function TodosPage({ token }) {
   }
 
   return (
-    <>
+    <div>
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+          <button onClick={() => setError("")}>Clear Error</button>
+        </div>
+      )}
+      {isTodoListLoading && <p>Loading todos…</p>}
+
       <TodoForm onAddTodo={addTodo} />
       <TodoList
         todoList={todoList}
         onCompleteTodo={completeTodo}
         onUpdateTodo={updateTodo}
       />
-    </>
+    </div>
   );
 }
 

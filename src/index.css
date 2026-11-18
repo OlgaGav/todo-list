@@ -31,3 +31,9 @@ body {
     cursor: pointer;
     margin-top: 1rem;
 }
+
+.error-message{
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
