@@ -37,7 +37,6 @@ function Logon({ onSetEmail, onSetToken}) {
         <label htmlFor='email'>email</label>
         <input
           id="email"
-          labelText="email"
           value={email}
           required
           onChange={(event) => setEmail(event.target.value)}
@@ -45,10 +44,10 @@ function Logon({ onSetEmail, onSetToken}) {
         <label htmlFor='password'>password</label>
         <input
           id="password"
-          labelText="password"
           value={password}
+          type="password"
           required
-          onChang={(event) => setPassword(event.target.value)}
+          onChange={(event) => setPassword(event.target.value)}
         ></input>
         <button disabled={isLoggingOn}>{isLoggingOn?"Logging in...":"Log On"}</button>
       </form>
