@@ -35,28 +35,106 @@ function TodosPage({ token }) {
     }
   }, [token]);
 
-  function addTodo(todoTitle) {
-    const newTodo = {
-      id: Date.now(),
-      title: todoTitle,
-      isCompleted: false,
-    };
+  // function addTodo(todoTitle) {
+  //   const newTodo = {
+  //     id: Date.now(),
+  //     title: todoTitle,
+  //     isCompleted: false,
+  //   };
+  //   setTodoList((previous) => [newTodo, ...previous]);
+  // }
+  async function addTodo(title) {
+    const newTodo = { id: Date.now(), title, isCompleted: false };
     setTodoList((previous) => [newTodo, ...previous]);
+    try {
+      const response = await fetch("/api/tasks", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": token },
+        credentials: "include",
+        body: JSON.stringify({ title, isCompleted: false }),
+      });
+      if (!response.ok) {
+        throw new Error(`Could not add todo (${response.status})`);
+      }
+      const savedTodo = await response.json();
+      setTodoList((previous) =>
+        previous.map((todo) => (todo.id === newTodo.id ? savedTodo : todo)),
+      );
+    } catch (error) {
+      setTodoList((previous) =>
+        previous.filter((todo) => todo.id !== newTodo.id),
+      );
+      setError(error.message);
+    }
   }
 
-  function updateTodo(editedTodo) {
-    const updatedTodos = todoList.map((todo) =>
-      todo.id === editedTodo.id ? { ...editedTodo } : todo,
+  // function updateTodo(editedTodo) {
+  //   const updatedTodos = todoList.map((todo) =>
+  //     todo.id === editedTodo.id ? { ...editedTodo } : todo,
+  //   );
+  //   setTodoList(updatedTodos);
+  // }
+
+  async function updateTodo(editedTodo) {
+    const originalTodo = todoList.find((todo) => todo.id === editedTodo.id);
+    setTodoList((previous) =>
+      previous.map((todo) => (todo.id === editedTodo.id ? editedTodo : todo)),
     );
-    setTodoList(updatedTodos);
+    try {
+      const response = await fetch(`/api/tasks/${editedTodo.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": token },
+        credentials: "include",
+        body: JSON.stringify({
+          title: editedTodo.title,
+          isCompleted: editedTodo.isCompleted,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`Could not update todo (${response.status})`);
+      }
+    } catch (error) {
+      setTodoList((previous) =>
+        previous.map((todo) =>
+          todo.id === editedTodo.id ? originalTodo : todo,
+        ),
+      );
+      setError(error.message);
+    }
   }
 
-  function completeTodo(id) {
-    const updatedTodoList = todoList.map((todo) =>
-      todo.id === id ? { ...todo, isCompleted: true } : todo,
+  // function completeTodo(id) {
+  //   const updatedTodoList = todoList.map((todo) =>
+  //     todo.id === id ? { ...todo, isCompleted: true } : todo,
+  //   );
+  //   setTodoList(updatedTodoList);
+  // }
+
+  async function completeTodo(id) {
+    const originalTodo = todoList.find((todo) => todo.id === id);
+    setTodoList((previous) =>
+      previous.map((todo) =>
+        todo.id === id ? { ...todo, isCompleted: true } : todo,
+      ),
     );
-    setTodoList(updatedTodoList);
+    try {
+      const response = await fetch(`/api/tasks/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": token },
+        credentials: "include",
+        body: JSON.stringify({ isCompleted: true }),
+      });
+      if (!response.ok) {
+        throw new Error(`Could not complete todo (${response.status})`);
+      }
+    } catch (error) {
+      setTodoList((previous) =>
+        previous.map((todo) => (todo.id === id ? originalTodo : todo)),
+      );
+      setError(error.message);
+    }
   }
+
   return (
     <>
       <TodoForm onAddTodo={addTodo} />
