@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import TodoList from "./TodoList/TodoList.jsx";
 import TodoForm from "./TodoForm.jsx";
 import { isValidTodoTitle } from "@/utils/todoValidation";
@@ -13,12 +13,17 @@ function TodosPage({ token }) {
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortDirection, setSortDirection] = useState("desc");
   const [filterTerm, setFilterTerm] = useState("");
-
+  const [dataVersion, setDataVersion] = useState(0);
   const debouncedFilterTerm = useDebounce(filterTerm, 300);
 
   const handleFilterChange = (newTerm) => {
     setFilterTerm(newTerm);
   };
+
+  const invalidateCache = useCallback(() => {
+    setDataVersion((prev) => prev + 1);
+    console.log("Invalidating memo cache after todo mutation");
+  }, []);
 
   useEffect(() => {
     async function fetchTodos() {
@@ -77,6 +82,7 @@ function TodosPage({ token }) {
       setTodoList((previous) =>
         previous.map((todo) => (todo.id === newTodo.id ? savedTodo : todo)),
       );
+      invalidateCache();
     } catch (error) {
       setTodoList((previous) =>
         previous.filter((todo) => todo.id !== newTodo.id),
@@ -103,6 +109,7 @@ function TodosPage({ token }) {
       if (!response.ok) {
         throw new Error(`Could not update todo (${response.status})`);
       }
+      invalidateCache();
     } catch (error) {
       setTodoList((previous) =>
         previous.map((todo) =>
@@ -130,6 +137,7 @@ function TodosPage({ token }) {
       if (!response.ok) {
         throw new Error(`Could not complete todo (${response.status})`);
       }
+      invalidateCache();
     } catch (error) {
       setTodoList((previous) =>
         previous.map((todo) => (todo.id === id ? originalTodo : todo)),
@@ -137,6 +145,14 @@ function TodosPage({ token }) {
       setError(error.message);
     }
   }
+
+  const filteredTodoList = useMemo(() => {
+    console.log(`Recalculating filtered todos (v${dataVersion})`);
+    return {
+      version: dataVersion,
+      todos: todoList.filter((todo) => !todo.completed),
+    };
+  }, [todoList, dataVersion]);
 
   return (
     <div>
@@ -163,6 +179,7 @@ function TodosPage({ token }) {
         todoList={todoList}
         onCompleteTodo={completeTodo}
         onUpdateTodo={updateTodo}
+        dataVersion={dataVersion}
       />
     </div>
   );
