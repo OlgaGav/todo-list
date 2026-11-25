@@ -21,7 +21,7 @@ function SortBy({
       <div>
         <label htmlFor="sortDirection"> Sort Direction</label>
         <select
-          id="sortDsirection"
+          id="sortDirection"
           value={sortDirection}
           onChange={(event) => onSortDirectionChange(event.target.value)}
         >
