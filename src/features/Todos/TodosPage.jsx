@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import TodoList from "./TodoList/TodoList.jsx";
 import TodoForm from "./TodoForm.jsx";
 import { isValidTodoTitle } from "@/utils/todoValidation";
@@ -15,6 +15,7 @@ function TodosPage({ token }) {
   const [filterTerm, setFilterTerm] = useState("");
   const [dataVersion, setDataVersion] = useState(0);
   const debouncedFilterTerm = useDebounce(filterTerm, 300);
+  const [filterError, setFilterError] = useState("");
 
   const handleFilterChange = (newTerm) => {
     setFilterTerm(newTerm);
@@ -53,8 +54,17 @@ function TodosPage({ token }) {
         }
         const data = await response.json();
         setTodoList(data.tasks);
+        setFilterError("");
       } catch (error) {
-        setError(error.message);
+        if (
+          debouncedFilterTerm ||
+          sortBy !== "createdAt" ||
+          sortDirection !== "desc"
+        ) {
+          setFilterError(`Error filtering/sorting todos: ${error.message}`);
+        } else {
+          setError(`Error fetching todos: ${error.message}`);
+        }
       } finally {
         setIsTodoListLoading(false);
       }
@@ -146,20 +156,36 @@ function TodosPage({ token }) {
     }
   }
 
-  const filteredTodoList = useMemo(() => {
-    console.log(`Recalculating filtered todos (v${dataVersion})`);
-    return {
-      version: dataVersion,
-      todos: todoList.filter((todo) => !todo.completed),
-    };
-  }, [todoList, dataVersion]);
-
   return (
     <div>
       {error && (
         <div className="error-message">
           <p>{error}</p>
           <button onClick={() => setError("")}>Clear Error</button>
+        </div>
+      )}
+      {filterError && (
+        <div>
+          <p>{filterError}</p>
+          <button
+            type="button"
+            onClick={() => {
+              setFilterTerm("");
+              setSortBy("createdAt");
+              setSortDirection("desc");
+              setFilterError("");
+            }}
+          >
+            Reset Filters
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setFilterError("");
+            }}
+          >
+            Clear Filter Error
+          </button>
         </div>
       )}
       {isTodoListLoading && <p>Loading todos…</p>}
