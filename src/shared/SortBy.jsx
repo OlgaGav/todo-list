@@ -26,7 +26,7 @@ function SortBy({
           onChange={(event) => onSortDirectionChange(event.target.value)}
         >
           <option value="desc">Descending</option>
-          <option value="asc"> Ascending</option>
+          <option value="asc">Ascending</option>
         </select>
       </div>
     </div>
