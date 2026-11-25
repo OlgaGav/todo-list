@@ -7,9 +7,9 @@ function SortBy({
   return (
     <div>
       <div>
-        <label htmlFor="sort-by"> Sort By</label>
+        <label htmlFor="sortBy"> Sort By</label>
         <select
-          id="sort-by"
+          id="sortBy"
           value={sortBy}
           onChange={(event) => onSortByChange(event.target.value)}
         >
@@ -19,9 +19,9 @@ function SortBy({
       </div>
 
       <div>
-        <label htmlFor="sort-direction"> Sort Direction</label>
+        <label htmlFor="sortDirection"> Sort Direction</label>
         <select
-          id="sort-direction"
+          id="sortDsirection"
           value={sortDirection}
           onChange={(event) => onSortDirectionChange(event.target.value)}
         >
